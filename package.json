@@ -1,0 +1,15 @@
+{
+  "name": "rma-meilenstein-4",
+  "version": "1.0.0",
+  "description": "Meilenstein 4 for Rich Media Applications HS Osnabrück",
+  "main": "index.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kommodore/rma-meilenstein-4"
+  },
+  "author": "Christian Heidemann, Jonas Heitmann",
+  "license": "MIT"
+}
