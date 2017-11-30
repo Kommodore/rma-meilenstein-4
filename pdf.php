@@ -1,5 +1,8 @@
 <?php
 	include( 'fpdf181/fpdf.php' );
+	include('CSVHandler.php');
+
+	$csv = new CSVHandler('input.csv');
 
 	$row     = 0;
 	$content = array();
@@ -9,21 +12,17 @@
 		$pdf->SetFont('Arial','',14);
 		$pdf->AddPage();
 
-		while(($data = fgetcsv( $handle, 1000, "," ) ) !== false ){
-			if( $row ++ == 0 ){
-				$num = count($data);
-				for ( $col = 0; $col < $num; $col ++ ) {
-					$pdf->Cell( 65, 7, $data[$col], 1 );
-				}
-				$pdf->Ln();
-			} else {
-				$num = count( $data );
-				for ( $col = 0; $col < $num; $col ++ ) {
-					$pdf->Cell( 65, 6, $data[$col], 1 );
-				}
-				$pdf->Ln();
-			}
+		foreach($csv->getColumns() as $column){
+			$pdf->Cell( 65, 7, $column, 1 );
 		}
+		$pdf->Ln();
+		foreach($csv->getContent() as $content){
+			foreach($content as $entry){
+				$pdf->Cell( 65, 7, $entry, 1 );
+			}
+			$pdf->Ln();
+		}
+
 		fclose( $handle );
 		$pdf->Output();
 	}

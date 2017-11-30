@@ -1,34 +1,23 @@
 <?php
-	if("POST" == $_SERVER['REQUEST_METHOD']){
-		$attrs = array($_POST['id'], $_POST['company_name'], $_POST['owner_name']);
-		$file = fopen("input.csv","a+");
+	include('CSVHandler.php');
 
-		fputcsv($file, $attrs);
-		fclose($file);
+	$csv = new CSVHandler('input.csv');
+	if("POST" == $_SERVER['REQUEST_METHOD']){
+		$csv->setContent(array($_POST['id'], $_POST['company_name'], $_POST['owner_name']));
+		$csv->saveFile();
 	}
 
-	$row = 0;
-	$content = "";
-	$thead = "";
-	if (($handle = fopen("input.csv", "r")) !== FALSE) {
-		while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-			if($row++ == 0){
-				$num = count($data);
-				$thead .= "<tr>";
-				for ($c=0; $c < $num; $c++) {
-					$thead .= "<th>".$data[$c] . "</th>";
-				}
-				$thead .= "<th></th></tr>";
-			} else {
-				$num = count($data);
-				$content .= "<tr>";
-				for ($c=0; $c < $num; $c++) {
-					$content .= "<td>".$data[$c] . "</td>";
-				}
-				$content .= '<td><a href="edit.php?id='.$data[0].'">Bearbeiten</a></td></tr>';
-			}
-		}
-		fclose($handle);
+	$thead = $content = "";
+	$row = 1;
+	$data = $csv->getContent();
+	$head = $csv->getColumns();
+	foreach($data as $entry){
+		$row++;
+		$content .= '<tr><td>'.$entry[0].'</td><td>'.$entry[1].'</td>
+			<td>'.$entry[2].'</td><td><a href="edit.php?id='.$entry[0].'">Bearbeiten</a></td></tr>';
+	}
+	foreach($head as $entry){
+		$thead .= '<td>'.$entry.'</td>';
 	}
 ?>
 <!DOCTYPE html>
@@ -42,7 +31,7 @@
 			<a href="form.php?id=<?= $row ?>" type="button" class="btn btn-info btn-lg col-xs-offset-1">Eintrag hinzufügen</a>
 			<a href="pdf.php" type="button" class="btn btn-info btn-lg col-xs-offset-4">PDF erstellen</a><br><br>
 			<table class="table-bordered col-xs-10 col-xs-offset-1">
-				<thead><?= $thead ?></thead>
+				<thead><tr><?= $thead ?><th></th></tr></thead>
 				<tbody><?= $content ?></tbody>
 			</table>
 		</main>

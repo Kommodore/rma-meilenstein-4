@@ -1,40 +1,29 @@
 <?php
-$company = $owner = "";
+	include('CSVHandler.php');
+	$csv = new CSVHandler('input.csv');
+	$company = $owner = $id = "";
 
-if("POST" == $_SERVER['REQUEST_METHOD']){
-	if (($handle = fopen("input.csv", "r")) !== FALSE) {
-		$output = array();
-		while(($attrs = fgetcsv($handle, 1000, ",")) !== false){
-			if($attrs[0] == $_GET['id']){
-				$attrs[1] = $_POST['company_name'];
-				$attrs[2] = $_POST['owner_name'];
-			}
-			if(isset($_POST['delete']) && $attrs[0] == $_GET['id']){
-				//
-			} else {
-				$output[] = $attrs;
-			}
+	if("POST" == $_SERVER['REQUEST_METHOD']){
+		if(isset($_POST['delete']) && isset($_POST['id']) && is_numeric($_POST['id'])){
+			$csv->deleteContent(0, $_POST['id']);
+		} else {
+			$csv->setContent(array($_GET['id'], $_POST['company_name'], $_POST['owner_name']), true, 0, $_POST['id']);
 		}
-
-		fclose($handle);
-		$file = fopen("input.csv","w+");
-		foreach($output as $entry){
-			fputcsv($file, $entry);
-		}
-		fclose($file);
+		$csv->saveFile();
+		header("location: index.php");
 	}
-	header("location: index.php");
-}
 
-if (($handle = fopen("input.csv", "r")) !== FALSE) {
-	while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-		if($data[0] == $_GET['id']){
-			$company = $data[1];
-			$owner = $data[2];
+	$data = $csv->getContent();
+	if($data){
+		foreach($data as $entry){
+			if($entry[0] == $_GET['id']){
+				$company = $entry[1];
+				$owner = $entry[2];
+				$id = $entry[0];
+			}
 		}
 	}
-	fclose($handle);
-}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -45,7 +34,7 @@ if (($handle = fopen("input.csv", "r")) !== FALSE) {
 <body>
 <main class="container">
 	<form action="" method="POST">
-		<input type="hidden" value="<?= $_GET['id'] ?>" name="id">
+		<input type="hidden" value="<?= $id ?>" name="id">
 		<label for="company_name">Name der Firma:</label>
 		<input type="text" class="form-control" name="company_name" id="company_name" value="<?= $company ?>" required="required">
 		<label for="owner_name">Name des Inhabers:</label>
