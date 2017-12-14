@@ -87,10 +87,10 @@ class CSVHandler{
 	/**
 	 * Add a new entry for the csv file or edit one. To save the changes, saveFile() has to be called.
 	 *
-	 * @param array $newContent
-	 * @param bool  $override
-	 * @param int   $columnPosition
-	 * @param int   $key
+	 * @param array $newContent The new content in the fitting array form.
+	 * @param bool  $override Set to true if a position should be overwritten. Column name and $key have to be set.
+	 * @param int   $columnPosition The position of the column in the array where the key has to match.
+	 * @param int   $key The key where to replace the content.
 	 *
 	 * @version 1.0.0
 	 * @since 1.0.0
@@ -119,8 +119,8 @@ class CSVHandler{
 
 	/**
 	 *
-	 * @param int $columnPosition
-	 * @param int $key
+	 * @param int $columnPosition The position of the column in the array where the key has to match.
+	 * @param int $key The key where to replace the content.
 	 *
 	 * @version 1.0.0
 	 * @since 1.0.0
